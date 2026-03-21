@@ -17,7 +17,7 @@ const links = [
     ),
   },
   {
-    href: "/projects",
+    href: "/dashboard/projects",
     label: "Projeler",
     icon: (
       <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
@@ -26,7 +26,7 @@ const links = [
     ),
   },
   {
-    href: "/board",
+    href: "/dashboard/board",
     label: "Board",
     icon: (
       <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
@@ -37,7 +37,7 @@ const links = [
     ),
   },
   {
-    href: "/ai",
+    href:"/dashboard/ai",
     label: "AI Asistan",
     icon: (
       <svg width="18" height="18" viewBox="0 0 18 18" fill="none">

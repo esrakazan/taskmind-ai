@@ -1,18 +1,17 @@
 import Sidebar from "@/components/layout/Sidebar";
 import Navbar from "@/components/layout/Navbar";
 
-export default function DashboardLayout({
+export default function AppLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex">
+    <div style={{ display: "flex", minHeight: "100vh", background: "#07070F" }}>
       <Sidebar />
-
-      <div className="flex-1">
+      <div style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden" }}>
         <Navbar />
-        <main>{children}</main>
+        <main style={{ flex: 1, overflow: "auto" }}>{children}</main>
       </div>
     </div>
   );

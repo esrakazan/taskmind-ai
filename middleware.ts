@@ -5,7 +5,7 @@ const JWT_SECRET = new TextEncoder().encode(
   process.env.JWT_SECRET || "taskmind-secret"
 );
 
-const PROTECTED_PATHS = ["/dashboard", "/board", "/ai", "/profile"];
+const PROTECTED_PATHS = ["/dashboard"];
 const AUTH_PATHS = ["/login", "/register"];
 
 export async function middleware(req: NextRequest) {
@@ -35,5 +35,5 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/dashboard/:path*", "/board/:path*", "/ai/:path*", "/profile/:path*", "/login", "/register"],
+  matcher: ["/dashboard/:path*", "/login", "/register"],
 };
