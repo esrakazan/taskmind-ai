@@ -1,0 +1,144 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+model User {
+  id        String   @id @default(cuid())
+  name      String
+  email     String   @unique
+  password  String
+  avatar    String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  ownedProjects   Project[]       @relation("ProjectOwner")
+  memberships     ProjectMember[]
+  assignedTasks   Task[]          @relation("TaskAssignee")
+  comments        Comment[]
+  sessions        Session[]
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+}
+
+model Project {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  color       String   @default("#00E5A0")
+  ownerId     String
+  owner       User     @relation("ProjectOwner", fields: [ownerId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  members  ProjectMember[]
+  tasks    Task[]
+  columns  Column[]
+  notes    Note[]
+}
+
+model ProjectMember {
+  id        String     @id @default(cuid())
+  projectId String
+  userId    String
+  role      MemberRole @default(MEMBER)
+  joinedAt  DateTime   @default(now())
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([projectId, userId])
+}
+
+enum MemberRole {
+  OWNER
+  ADMIN
+  MEMBER
+  VIEWER
+}
+
+model Column {
+  id        String   @id @default(cuid())
+  name      String
+  order     Int
+  projectId String
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  tasks Task[]
+}
+
+model Task {
+  id          String     @id @default(cuid())
+  title       String
+  description String?
+  priority    Priority   @default(MEDIUM)
+  status      TaskStatus @default(TODO)
+  dueDate     DateTime?
+  order       Int        @default(0)
+  projectId   String
+  columnId    String
+  assigneeId  String?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  project  Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  column   Column    @relation(fields: [columnId], references: [id])
+  assignee User?     @relation("TaskAssignee", fields: [assigneeId], references: [id])
+  labels   Label[]
+  comments Comment[]
+}
+
+enum Priority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+enum TaskStatus {
+  TODO
+  IN_PROGRESS
+  IN_REVIEW
+  DONE
+}
+
+model Label {
+  id    String @id @default(cuid())
+  name  String
+  color String @default("#6B7280")
+  tasks Task[]
+}
+
+model Comment {
+  id        String   @id @default(cuid())
+  content   String
+  taskId    String
+  authorId  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  task   Task @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  author User @relation(fields: [authorId], references: [id])
+}
+
+model Note {
+  id        String   @id @default(cuid())
+  title     String
+  content   String?
+  projectId String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+}
